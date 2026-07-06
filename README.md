@@ -1,36 +1,33 @@
 # Backup Drill Check
 
-| | |
+| Detail | Value |
 | --- | --- |
-| Focus | recovery drills |
-| Command | `backup-drill-check` |
-| Inputs | text, JSON, JSONL, or CSV |
-| Output | Markdown or JSON |
+| Area | delivery |
+| Entry | `backup-drill-check` |
+| Input | plain text |
+| Output | terminal findings, optional JSON |
 
 ![Backup Drill Check cover](assets/readme-cover.svg)
 
-Audit backup plans for restore proof, RPO, and RTO gaps. The repository is intentionally plain: a small command, a visible rule surface, and enough examples to make the behavior inspectable.
+## Where it helps
 
-## Policy surface
+Audit backup plans for restore proof, RPO, and RTO gaps. It keeps the review small: one input file, a short list of findings, and enough context to fix the line that caused the warning.
 
-| Rule | Level | Why it matters |
-| --- | --- | --- |
-| `restore-never-tested` | high | restore test is missing |
-| `unknown-rpo` | medium | RPO is not defined |
-| `missing-rto` | low | RTO is not defined |
+## How the check reads
 
-## Local run
+![Workflow diagram](assets/readme-diagram.svg)
+
+## Signals
+
+- `restore-never-tested` - restore test is missing (high); Schedule and record a restore drill..
+- `unknown-rpo` - RPO is not defined (medium); Define maximum acceptable data loss..
+- `missing-rto` - RTO is not defined (low); Define target recovery time and owner..
+
+## Local check
 
 ```bash
 git clone https://github.com/mertefekurt/backup-drill-check.git
 cd backup-drill-check
-python -m venv .venv
-source .venv/bin/activate
 python -m pip install -e ".[dev]"
 backup-drill-check examples/sample.txt
-backup-drill-check examples/sample.txt --json
 ```
-
-## Why the sample fails
-
-`backup daily restore_test never rpo unknown rto missing` is intentionally shaped to hit the rules above, so it is useful as a quick smoke test after edits.
